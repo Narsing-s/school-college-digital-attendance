@@ -27,7 +27,7 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npx prisma generate
-      - run: npx prisma db push
+      - run: npm run db:migrate:deploy
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
