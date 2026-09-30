@@ -11,7 +11,7 @@ export async function GET(req:Request){
     const from=url.searchParams.get("from");const to=url.searchParams.get("to");
     const where:any={institutionId:u.institutionId};
     if(u.role==="TEACHER"){const teacher=await db.teacher.findFirst({where:{userId:u.id,institutionId:u.institutionId},select:{id:true}});if(!teacher)return NextResponse.json({error:"Teacher profile not found"},{status:403});where.session={...(where.session||{}),teacherId:teacher.id};}
-    if(from||to)where.session={date:{...(from?{gte:new Date(from)}:{}),...(to?{lte:new Date(to)}:{})}};
+    if(from||to)where.session={...(where.session||{}),date:{...(from?{gte:new Date(from)}:{}),...(to?{lte:new Date(to)}:{})}};
     const rows=await db.attendanceRecord.findMany({
       where,
       include:{student:true,session:{include:{subject:true,section:{include:{classLevel:true}},teacher:{include:{user:true}}}}},
