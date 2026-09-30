@@ -28,7 +28,7 @@ async function main(){
    const su=await db.user.upsert({where:{username:"student1"},update:{passwordHash:password,institutionId:institution.id,role:UserRole.STUDENT,status:UserStatus.ACTIVE},create:{username:"student1",email:"student1@example.com",passwordHash:password,role:UserRole.STUDENT,status:UserStatus.ACTIVE,institutionId:institution.id}});
    await db.student.update({where:{id:st.id},data:{userId:su.id,email:"student1@example.com"}});
    const pu=await db.user.upsert({where:{username:"parent1"},update:{passwordHash:password,institutionId:institution.id,role:UserRole.PARENT,status:UserStatus.ACTIVE},create:{username:"parent1",email:"parent1@example.com",passwordHash:password,role:UserRole.PARENT,status:UserStatus.ACTIVE,institutionId:institution.id}});
-   const parent=await db.parent.upsert({where:{institutionId_userId:{institutionId:institution.id,userId:pu.id}},update:{},create:{institutionId:institution.id,userId:pu.id,phone:"9000000000"}});
+   const parent=await db.parent.upsert({where:{userId:pu.id}},update:{},create:{institutionId:institution.id,userId:pu.id,phone:"9000000000"}});
    await db.parentStudent.upsert({where:{parentId_studentId:{parentId:parent.id,studentId:st.id}},update:{},create:{parentId:parent.id,studentId:st.id,relationship:"Parent"}});
   }
  }
