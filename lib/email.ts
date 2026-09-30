@@ -1,0 +1,2 @@
+export async function sendEmail(args:{to:string;subject:string;html:string}){const key=process.env.RESEND_API_KEY;const from=process.env.EMAIL_FROM;const app=process.env.NEXT_PUBLIC_APP_URL;if(!key||!from)return false;const r=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"content-type":"application/json","authorization":"Bearer "+key},body:JSON.stringify({from,to:args.to,subject:args.subject,html:args.html})});return r.ok}
+export function appUrl(){return process.env.NEXT_PUBLIC_APP_URL||"http://localhost:3000"}
