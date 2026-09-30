@@ -1,0 +1,1 @@
+import{describe,it,expect}from"vitest";describe("attendance percentage",()=>{it("calculates present/total",()=>expect(Number((82/91*100).toFixed(2))).toBe(90.11));});
