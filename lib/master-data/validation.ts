@@ -1,0 +1,10 @@
+import {z} from "zod";
+export const campusSchema=z.object({name:z.string().trim().min(2).max(120),code:z.string().trim().min(1).max(30),address:z.string().trim().max(300).optional().nullable()});
+export const academicYearSchema=z.object({name:z.string().trim().min(4).max(40),startDate:z.coerce.date(),endDate:z.coerce.date(),campusId:z.string().optional().nullable(),isCurrent:z.boolean().optional()}).refine(x=>x.startDate<x.endDate,{message:"End date must be after start date"});
+export const departmentSchema=z.object({name:z.string().trim().min(2).max(120),code:z.string().trim().min(1).max(30)});
+export const classSchema=z.object({name:z.string().trim().min(1).max(120),code:z.string().trim().min(1).max(30),departmentId:z.string().optional().nullable()});
+export const sectionSchema=z.object({name:z.string().trim().min(1).max(40),capacity:z.coerce.number().int().min(1).max(500)});
+export const subjectSchema=z.object({code:z.string().trim().min(1).max(40),name:z.string().trim().min(2).max(120),credits:z.coerce.number().int().min(0).max(20).optional().nullable(),classLevelId:z.string().optional().nullable(),departmentId:z.string().optional().nullable()});
+export const enrollmentSchema=z.object({academicYearId:z.string().min(1),studentId:z.string().min(1),sectionId:z.string().min(1),rollNumber:z.string().trim().max(30).optional().nullable()});
+export const teacherAssignmentSchema=z.object({academicYearId:z.string().min(1),teacherId:z.string().min(1),subjectId:z.string().min(1),sectionId:z.string().min(1)});
+export const userSchema=z.object({username:z.string().trim().min(3).max(80).regex(/^[A-Za-z0-9._-]+$/),email:z.string().email().optional().nullable(),password:z.string().min(8).max(128),role:z.enum(["ADMIN","PRINCIPAL","TEACHER","STUDENT","PARENT"]),status:z.enum(["ACTIVE","INACTIVE"]).optional()});
