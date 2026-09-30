@@ -12,6 +12,13 @@ export async function POST(req:Request){try{
  if(u.role==="STUDENT"&&student.userId!==u.id)return NextResponse.json({error:"You can only request leave for yourself"},{status:403});
  if(u.role==="PARENT"){const p=await db.parent.findFirst({where:{userId:u.id,institutionId:u.institutionId}});const link=p&&await db.parentStudent.findUnique({where:{parentId_studentId:{parentId:p.id,studentId:student.id}}});if(!link)return NextResponse.json({error:"Student is not linked to this parent"},{status:403})}
  if(!["STUDENT","PARENT","TEACHER","ADMIN","PRINCIPAL"].includes(u.role))return NextResponse.json({error:"Forbidden"},{status:403});
+ if(u.role==="TEACHER"){
+  const teacher=await db.teacher.findFirst({where:{userId:u.id,institutionId:u.institutionId}});
+  const enrollment=await db.enrollment.findFirst({where:{institutionId:u.institutionId,studentId:student.id,status:"ACTIVE"}});
+  if(!teacher||!enrollment)return NextResponse.json({error:"Teacher is not authorized for this student"},{status:403});
+  const assigned=await db.teacherAssignment.findFirst({where:{institutionId:u.institutionId,teacherId:teacher.id,sectionId:enrollment.sectionId,academicYearId:enrollment.academicYearId}});
+  if(!assigned)return NextResponse.json({error:"Teacher is not assigned to this student's section"},{status:403});
+ }
  const overlap=await db.leaveRequest.findFirst({where:{institutionId:u.institutionId,studentId:student.id,status:{in:["PENDING","APPROVED"]},fromDate:{lte:to},toDate:{gte:from}}});
  if(overlap)return NextResponse.json({error:"Overlapping leave request already exists"},{status:409});
  const row=await db.leaveRequest.create({data:{institutionId:u.institutionId,studentId:student.id,fromDate:from,toDate:to,reason:String(b.reason).trim()}});
