@@ -35,9 +35,11 @@ model Institution {
  timetables Timetable[]
  sessions AttendanceSession[]
  records AttendanceRecord[]
+ syncOperations AttendanceSyncOperation[]
  leaves LeaveRequest[]
  notifications Notification[]
  auditLogs AuditLog[]
+ syncOperations AttendanceSyncOperation[]
 }
 model Campus { id String @id @default(cuid()); institutionId String; name String; code String; address String?; status UserStatus @default(ACTIVE); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); academicYears AcademicYear[]; @@unique([institutionId,code]) }
 model AcademicYear { id String @id @default(cuid()); institutionId String; campusId String?; name String; startDate DateTime; endDate DateTime; isCurrent Boolean @default(false); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); campus Campus? @relation(fields:[campusId],references:[id],onDelete:SetNull); enrollments Enrollment[]; assignments TeacherAssignment[]; timetables Timetable[]; sessions AttendanceSession[]; @@unique([institutionId,name]); @@index([institutionId,isCurrent]) }
@@ -61,3 +63,4 @@ model AuditLog { id String @id @default(cuid()); institutionId String; actorUser
 model Session { id String @id @default(cuid()); userId String; tokenHash String @unique; expiresAt DateTime; createdAt DateTime @default(now()); lastSeenAt DateTime @default(now()); user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,expiresAt]) }
 model EmailVerificationToken { id String @id @default(cuid()); userId String; tokenHash String @unique; expiresAt DateTime; verifiedAt DateTime?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,expiresAt]) }
 model PasswordResetToken { id String @id @default(cuid()); userId String; tokenHash String @unique; expiresAt DateTime; usedAt DateTime?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,expiresAt]) }
+model AttendanceSyncOperation { id String @id @default(cuid()); operationId String @unique; institutionId String; userId String; sessionId String; createdAt DateTime @default(now()); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); session AttendanceSession @relation(fields:[sessionId],references:[id],onDelete:Cascade); @@index([institutionId,createdAt]) }
