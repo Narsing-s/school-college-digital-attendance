@@ -1,0 +1,1 @@
+import{test,expect}from"@playwright/test";test("attendance page renders",async({page})=>{await page.goto("/attendance");await expect(page.getByText(/Take Attendance|TEACHER/)).toBeVisible();});
