@@ -23,7 +23,7 @@ export async function PATCH(req:Request,{params}:{params:Promise<{id:string}>}){
         const sessions=await tx.attendanceSession.findMany({where:{institutionId:u.institutionId!,date:{gte:before.fromDate,lte:before.toDate},section:{enrollments:{some:{studentId:before.studentId,status:"ACTIVE"}}}},select:{id:true}});
         for(const s of sessions) await tx.attendanceRecord.upsert({where:{sessionId_studentId:{sessionId:s.id,studentId:before.studentId}},create:{institutionId:u.institutionId!,sessionId:s.id,studentId:before.studentId,status:"LEAVE",markedBy:u.id,remarks:"Approved leave"},update:{status:"LEAVE",markedAt:new Date(),markedBy:u.id,remarks:"Approved leave"}});
       }
-      await tx.auditLog.create({data:{institutionId:u.institutionId!,actorUserId:u.id,action:"LEAVE_STATUS_CHANGED",entityType:"LeaveRequest",entityId:id,oldValue:{status:before.status},newValue:{status:updated.status},reason:b.reason||"Leave workflow",ip:req.headers.get("x-forwarded-for")||req.headers.get("x-real-ip"),userAgent:req.headers.get("user-agent")}});
+      await tx.auditLog.create({data:{institutionId:u.institutionId!,actorUserId:u.id,userId:u.id,action:"LEAVE_STATUS_CHANGED",entityType:"LeaveRequest",entity:"LeaveRequest",entityId:id,oldValue:{status:before.status},newValue:{status:updated.status},reason:b.reason||"Leave workflow",timestamp:new Date(),ip:req.headers.get("x-forwarded-for")||req.headers.get("x-real-ip"),userAgent:req.headers.get("user-agent")}});
       return updated;
     });
     return NextResponse.json(row);
