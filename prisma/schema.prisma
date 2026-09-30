@@ -1,5 +1,8 @@
-generator client { provider = "prisma-client-js" }
-datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+generator client { provider = "prisma-client-js"
+ previewFeatures = ["driverAdapters"]
+ engineType = "client"
+ }
+datasource db { provider = "sqlite" url = "file:./dev.db" }
 
 enum InstitutionType { SCHOOL COLLEGE }
 enum UserRole { SUPER_ADMIN ADMIN PRINCIPAL TEACHER STUDENT PARENT }
