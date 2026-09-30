@@ -8,6 +8,7 @@ function endOfDay(d:Date){const x=new Date(d);x.setHours(23,59,59,999);return x}
 export async function GET(req:Request){
   try{
     const u=await requireUser();
+    if(!["ADMIN","PRINCIPAL","TEACHER"].includes(u.role))return NextResponse.json({error:"Forbidden"},{status:403});
     if(!u.institutionId)return NextResponse.json({error:"No institution"},{status:400});
     const url=new URL(req.url);
     const period=url.searchParams.get("period")||"all";
