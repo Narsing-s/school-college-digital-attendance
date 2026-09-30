@@ -9,9 +9,26 @@ export async function GET(req:Request){
     if(!u.institutionId)return NextResponse.json({error:"No institution"},{status:400});
     const url=new URL(req.url);
     const from=url.searchParams.get("from");const to=url.searchParams.get("to");
+    const academicYearId=url.searchParams.get("academicYearId");
+    const subjectId=url.searchParams.get("subjectId");const classId=url.searchParams.get("classId");
+    const sectionId=url.searchParams.get("sectionId");const departmentId=url.searchParams.get("departmentId");
+    const teacherId=url.searchParams.get("teacherId");const studentId=url.searchParams.get("studentId");
     const where:any={institutionId:u.institutionId};
-    if(u.role==="TEACHER"){const teacher=await db.teacher.findFirst({where:{userId:u.id,institutionId:u.institutionId},select:{id:true}});if(!teacher)return NextResponse.json({error:"Teacher profile not found"},{status:403});where.session={...(where.session||{}),teacherId:teacher.id};}
-    if(from||to)where.session={...(where.session||{}),date:{...(from?{gte:new Date(from)}:{}),...(to?{lte:new Date(to)}:{})}};
+    const session:any={};
+    if(from||to)session.date={...(from?{gte:new Date(from)}:{}),...(to?{lte:new Date(to)}:{})};
+    if(academicYearId)session.academicYearId=academicYearId;
+    if(subjectId)session.subjectId=subjectId;
+    if(classId)session.classId=classId;
+    if(sectionId)session.sectionId=sectionId;
+    if(teacherId)session.teacherId=teacherId;
+    if(Object.keys(session).length)where.session=session;
+    if(departmentId)where.session={...(where.session||{}),section:{classLevel:{departmentId}}};
+    if(studentId)where.studentId=studentId;
+    if(u.role==="TEACHER"){
+      const teacher=await db.teacher.findFirst({where:{userId:u.id,institutionId:u.institutionId},select:{id:true}});
+      if(!teacher)return NextResponse.json({error:"Teacher profile not found"},{status:403});
+      where.session={...(where.session||{}),teacherId:teacher.id};
+    }
     const rows=await db.attendanceRecord.findMany({
       where,
       include:{student:true,session:{include:{subject:true,section:{include:{classLevel:true}},teacher:{include:{user:true}}}}},
