@@ -30,4 +30,5 @@ jobs:
       - run: npx prisma generate
       - run: npx prisma db push
       - run: npm run typecheck
+      - run: npm test
       - run: npm run build
