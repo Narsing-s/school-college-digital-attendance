@@ -17,6 +17,7 @@ model Institution {
  type InstitutionType
  timezone String @default("Asia/Kolkata")
  minAttendancePercent Float @default(75)
+ latePolicy LatePolicy @default(SEPARATE)
  createdAt DateTime @default(now())
  updatedAt DateTime @updatedAt
  campuses Campus[]
