@@ -1,0 +1,1 @@
+import {NextResponse} from "next/server";import {db} from "@/lib/db";import {requireUser} from "@/lib/auth";export async function GET(){try{const u=await requireUser();return NextResponse.json(await db.notification.findMany({where:{userId:u.id},orderBy:{createdAt:"desc"},take:100}))}catch(e){return NextResponse.json({error:"Unauthorized"},{status:401})}}
