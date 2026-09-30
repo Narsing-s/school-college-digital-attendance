@@ -13,7 +13,11 @@
     "db:seed": "tsx prisma/seed.ts",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "db:migrate:deploy": "prisma migrate deploy"
+    "db:migrate:deploy": "prisma migrate deploy",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "d1:migration:generate": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/d1/0001_initial.sql"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
@@ -24,7 +28,9 @@
     "bcryptjs": "^3.0.2",
     "lucide-react": "^0.468.0",
     "recharts": "^2.15.4",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "@opennextjs/cloudflare": "^1.19.0",
+    "@prisma/adapter-d1": "^6.19.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
@@ -37,6 +43,7 @@
     "@tailwindcss/postcss": "^4.1.0",
     "@types/qrcode": "^1.5.5",
     "vitest": "^3.2.4",
-    "@playwright/test": "^1.55.0"
+    "@playwright/test": "^1.55.0",
+    "wrangler": "^4.39.0"
   }
 }
