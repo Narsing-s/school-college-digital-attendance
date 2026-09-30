@@ -1,0 +1,1 @@
+import {NextResponse} from "next/server";import {db} from "@/lib/db";import {requireUser} from "@/lib/auth";export async function GET(){const u=await requireUser();return NextResponse.json(await db.teacher.findMany({where:{institutionId:u.institutionId||""},include:{user:true,department:true}}))}
