@@ -1,0 +1,1 @@
+import{z}from"zod";export const attendanceRecordSchema=z.object({studentId:z.string().min(1),status:z.enum(["PRESENT","ABSENT","LATE","EXCUSED","LEAVE"]),remarks:z.string().max(500).optional()});export const leaveSchema=z.object({studentId:z.string().min(1),fromDate:z.coerce.date(),toDate:z.coerce.date(),reason:z.string().min(1).max(1000)});
