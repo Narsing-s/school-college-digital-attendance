@@ -1,7 +1,6 @@
 import {NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {requireUser} from "@/lib/auth";
-import {calculateAttendance} from "@/lib/attendance/calculation";
 
 function startOfDay(d:Date){const x=new Date(d);x.setHours(0,0,0,0);return x}
 function endOfDay(d:Date){const x=new Date(d);x.setHours(23,59,59,999);return x}
@@ -71,7 +70,7 @@ export async function GET(req:Request){
       if(r.status==="LEAVE")x.leave++;
     }
 
-    const students=[...byStudent.values()].map(x=>{const calc=calculateAttendance(x,x.total?rows.find(r=>r.studentId===x.student.id)?.session.latePolicy||"SEPARATE":"SEPARATE");return {...x,earned:calc.earned,percentage:calc.percentage};});
+    const students=[...byStudent.values()].map(x=>({...x,percentage:x.total?Number((x.earned/x.total*100).toFixed(2)):0}));
     const trendMap=new Map<string,{date:string,present:number,absent:number,late:number,excused:number,leave:number,total:number}>();
     for(const r of rows){
       const date=new Date(r.session.date).toISOString().slice(0,10);
