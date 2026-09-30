@@ -1,0 +1,1 @@
+import{describe,it,expect}from"vitest";describe("attendance API contract",()=>{it("requires a session id for records",()=>expect("/api/attendance/sessions/:id/records").toContain("records"));});
