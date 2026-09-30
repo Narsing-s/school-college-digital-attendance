@@ -49,3 +49,29 @@ Seed account: admin / ChangeMe123!. Change it immediately outside development.
 `docker compose up --build` starts the app and PostgreSQL. Run Prisma migration/seed inside the app container before first production use.
 
 Never commit `.env`, database credentials, session secrets or production tokens.
+
+## Cloudflare Workers + D1
+
+This project can run on Cloudflare Workers using the OpenNext adapter and Cloudflare D1 (SQLite).
+
+### One-time Cloudflare setup
+
+1. Create a D1 database named `school-college-attendance`.
+2. Put the returned database ID in `wrangler.jsonc` as `d1_databases[0].database_id`.
+3. Apply the schema:
+   ```bash
+   npm install
+   npm run d1:migrate
+   ```
+4. Configure Worker secrets/variables in Cloudflare:
+   - `SESSION_SECRET`
+   - `NEXT_PUBLIC_APP_URL`
+   - `RESEND_API_KEY` and `EMAIL_FROM` when production email is enabled.
+5. Deploy:
+   ```bash
+   npm run deploy
+   ```
+
+The application uses the D1 binding named `DB`. The same Prisma schema is configured for SQLite locally and D1 in production.
+
+**Important D1 limitation:** Cloudflare D1 currently does not provide ACID transactions. Prisma's D1 adapter therefore does not provide real `$transaction` guarantees. This repository still contains transaction-based workflows inherited from the PostgreSQL implementation; those workflows must be refactored to D1-safe idempotent/batched writes before treating the D1 deployment as production-ready.
