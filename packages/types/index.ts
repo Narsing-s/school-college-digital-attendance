@@ -1,0 +1,1 @@
+export type AttendanceStatus="PRESENT"|"ABSENT"|"LATE"|"EXCUSED"|"LEAVE";export type UserRole="SUPER_ADMIN"|"ADMIN"|"PRINCIPAL"|"TEACHER"|"STUDENT"|"PARENT";export type AttendancePeriod="DAILY"|"WEEKLY"|"MONTHLY"|"SUBJECT"|"SEMESTER"|"ACADEMIC_YEAR";
