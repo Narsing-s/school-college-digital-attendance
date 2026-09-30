@@ -6,7 +6,8 @@ enum UserRole { SUPER_ADMIN ADMIN PRINCIPAL TEACHER STUDENT PARENT }
 enum UserStatus { ACTIVE INACTIVE }
 enum AttendanceStatus { PRESENT ABSENT LATE EXCUSED LEAVE }
 enum AttendanceMethod { MANUAL QR ROLL_NUMBER }
-enum SessionStatus { OPEN CLOSED }\nenum LatePolicy { PRESENT SEPARATE HALF_DAY }
+enum SessionStatus { OPEN CLOSED }
+enum LatePolicy { PRESENT SEPARATE HALF_DAY }
 enum LeaveStatus { PENDING APPROVED REJECTED CANCELLED }
 
 model Institution {
@@ -57,4 +58,5 @@ model LeaveRequest { id String @id @default(cuid()); institutionId String; stude
 model Notification { id String @id @default(cuid()); institutionId String; userId String; type String; title String; message String; readAt DateTime?; createdAt DateTime @default(now()); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,readAt]) }
 model AuditLog { id String @id @default(cuid()); institutionId String; actorUserId String; action String; entityType String; entityId String; oldValue Json?; newValue Json?; reason String?; ip String?; userAgent String?; deviceId String?; deviceName String?; createdAt DateTime @default(now()); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); actor User @relation(fields:[actorUserId],references:[id],onDelete:Cascade); @@index([institutionId,createdAt]) }
 model Session { id String @id @default(cuid()); userId String; tokenHash String @unique; expiresAt DateTime; createdAt DateTime @default(now()); lastSeenAt DateTime @default(now()); user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,expiresAt]) }
-model EmailVerificationToken { id String @id @default(cuid()); userId String; tokenHash String @unique; expiresAt DateTime; verifiedAt DateTime?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,expiresAt]) }\nmodel PasswordResetToken { id String @id @default(cuid()); userId String; tokenHash String @unique; expiresAt DateTime; usedAt DateTime?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,expiresAt]) }
+model EmailVerificationToken { id String @id @default(cuid()); userId String; tokenHash String @unique; expiresAt DateTime; verifiedAt DateTime?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,expiresAt]) }
+model PasswordResetToken { id String @id @default(cuid()); userId String; tokenHash String @unique; expiresAt DateTime; usedAt DateTime?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,expiresAt]) }
