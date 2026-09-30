@@ -17,7 +17,9 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "d1:migration:generate": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/d1/0001_initial.sql"
+    "d1:migration:generate": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/d1/0001_initial.sql",
+    "d1:migrate": "wrangler d1 migrations apply school-college-attendance --remote",
+    "d1:migrate:local": "wrangler d1 migrations apply school-college-attendance --local"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
