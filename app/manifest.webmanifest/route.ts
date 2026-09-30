@@ -1,0 +1,1 @@
+import {NextResponse} from "next/server";export async function GET(){return NextResponse.json({name:"AttendFlow",short_name:"AttendFlow",start_url:"/",display:"standalone",background_color:"#07111f",theme_color:"#2563eb",icons:[]})}
