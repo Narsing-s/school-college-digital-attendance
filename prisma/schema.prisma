@@ -9,6 +9,7 @@ enum AttendanceMethod { MANUAL QR ROLL_NUMBER }
 enum SessionStatus { OPEN CLOSED }
 enum LatePolicy { PRESENT SEPARATE HALF_DAY }
 enum LeaveStatus { PENDING APPROVED REJECTED CANCELLED }
+enum CalendarDayType { WORKING HOLIDAY EXAM EVENT }
 
 model Institution {
  id String @id @default(cuid())
@@ -36,12 +37,13 @@ model Institution {
  sessions AttendanceSession[]
  records AttendanceRecord[]
  syncOperations AttendanceSyncOperation[]
+ calendarDays AcademicCalendarDay[]
  leaves LeaveRequest[]
  notifications Notification[]
  auditLogs AuditLog[]
 }
 model Campus { id String @id @default(cuid()); institutionId String; name String; code String; address String?; status UserStatus @default(ACTIVE); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); academicYears AcademicYear[]; @@unique([institutionId,code]) }
-model AcademicYear { id String @id @default(cuid()); institutionId String; campusId String?; name String; startDate DateTime; endDate DateTime; isCurrent Boolean @default(false); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); campus Campus? @relation(fields:[campusId],references:[id],onDelete:SetNull); enrollments Enrollment[]; assignments TeacherAssignment[]; timetables Timetable[]; sessions AttendanceSession[]; @@unique([institutionId,name]); @@index([institutionId,isCurrent]) }
+model AcademicYear { id String @id @default(cuid()); institutionId String; campusId String?; name String; startDate DateTime; endDate DateTime; isCurrent Boolean @default(false); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); campus Campus? @relation(fields:[campusId],references:[id],onDelete:SetNull); enrollments Enrollment[]; assignments TeacherAssignment[]; timetables Timetable[]; sessions AttendanceSession[]; calendarDays AcademicCalendarDay[]; @@unique([institutionId,name]); @@index([institutionId,isCurrent]) }
 model Department { id String @id @default(cuid()); institutionId String; name String; code String; status UserStatus @default(ACTIVE); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); classes ClassLevel[]; subjects Subject[]; teachers Teacher[]; @@unique([institutionId,code]) }
 model ClassLevel { id String @id @default(cuid()); institutionId String; departmentId String?; name String; code String; type InstitutionType; institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); department Department? @relation(fields:[departmentId],references:[id],onDelete:SetNull); sections Section[]; subjects Subject[]; attendanceSessions AttendanceSession[]; @@unique([institutionId,code]) }
 model Section { id String @id @default(cuid()); institutionId String; classLevelId String; name String; capacity Int @default(60); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); classLevel ClassLevel @relation(fields:[classLevelId],references:[id],onDelete:Cascade); enrollments Enrollment[]; assignments TeacherAssignment[]; timetables Timetable[]; sessions AttendanceSession[]; @@unique([classLevelId,name]) }
@@ -63,3 +65,5 @@ model Session { id String @id @default(cuid()); userId String; tokenHash String 
 model EmailVerificationToken { id String @id @default(cuid()); userId String; tokenHash String @unique; expiresAt DateTime; verifiedAt DateTime?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,expiresAt]) }
 model PasswordResetToken { id String @id @default(cuid()); userId String; tokenHash String @unique; expiresAt DateTime; usedAt DateTime?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,expiresAt]) }
 model AttendanceSyncOperation { id String @id @default(cuid()); operationId String @unique; institutionId String; userId String; sessionId String; createdAt DateTime @default(now()); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); session AttendanceSession @relation(fields:[sessionId],references:[id],onDelete:Cascade); @@index([institutionId,createdAt]) }
+
+model AcademicCalendarDay { id String @id @default(cuid()); institutionId String; academicYearId String; date DateTime; name String; type CalendarDayType @default(HOLIDAY); description String?; institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); academicYear AcademicYear @relation(fields:[academicYearId],references:[id],onDelete:Cascade); @@unique([institutionId,date]); @@index([institutionId,academicYearId,date]) }
