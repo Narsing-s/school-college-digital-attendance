@@ -18,5 +18,5 @@ test("attendance page exposes mobile-safe attendance controls",async({page})=>{
  await page.goto("/attendance");
  await expect(page.getByText("Take attendance")).toBeVisible();
  await expect(page.getByText(/ONLINE|OFFLINE/)).toBeVisible();
- await expect(page.getByRole("button",{name:/SAVE (ATTENDANCE|OFFLINE)/})).toBeVisible();
+ await expect(page.getByText("Queued:")).toBeVisible();
 });
