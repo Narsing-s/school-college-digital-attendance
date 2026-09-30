@@ -1,7 +1,4 @@
-generator client { provider = "prisma-client-js"
- previewFeatures = ["driverAdapters"]
- engineType = "client"
- }
+generator client { provider = "prisma-client-js" }
 datasource db { provider = "sqlite" url = "file:./dev.db" }
 
 enum InstitutionType { SCHOOL COLLEGE }
