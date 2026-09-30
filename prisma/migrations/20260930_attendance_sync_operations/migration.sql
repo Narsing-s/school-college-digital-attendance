@@ -1,0 +1,5 @@
+CREATE TABLE "AttendanceSyncOperation" ("id" TEXT NOT NULL, "operationId" TEXT NOT NULL, "institutionId" TEXT NOT NULL, "userId" TEXT NOT NULL, "sessionId" TEXT NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, CONSTRAINT "AttendanceSyncOperation_pkey" PRIMARY KEY ("id"));
+CREATE UNIQUE INDEX "AttendanceSyncOperation_operationId_key" ON "AttendanceSyncOperation"("operationId");
+CREATE INDEX "AttendanceSyncOperation_institutionId_createdAt_idx" ON "AttendanceSyncOperation"("institutionId","createdAt");
+ALTER TABLE "AttendanceSyncOperation" ADD CONSTRAINT "AttendanceSyncOperation_institutionId_fkey" FOREIGN KEY ("institutionId") REFERENCES "Institution"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "AttendanceSyncOperation" ADD CONSTRAINT "AttendanceSyncOperation_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "AttendanceSession"("id") ON DELETE CASCADE ON UPDATE CASCADE;
