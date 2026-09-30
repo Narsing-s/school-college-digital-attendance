@@ -1,2 +1,2 @@
 import{test,expect}from"@playwright/test";
-test("attendance application smoke flow",async({page})=>{await page.goto("/login");await expect(page.getByRole("heading",{name:/attendflow/i})).toBeVisible();await expect(page.getByRole("button",{name:/login/i})).toBeVisible();});
+test("login page smoke flow",async({page})=>{await page.goto("/login");await expect(page.getByRole("heading",{name:"Welcome back"})).toBeVisible();await expect(page.getByRole("button",{name:"Sign in"})).toBeVisible();});
