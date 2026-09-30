@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          package-manager-cache: false
       - run: npm install
       - name: Configure D1 database
         shell: bash
