@@ -39,7 +39,6 @@ model Institution {
  leaves LeaveRequest[]
  notifications Notification[]
  auditLogs AuditLog[]
- syncOperations AttendanceSyncOperation[]
 }
 model Campus { id String @id @default(cuid()); institutionId String; name String; code String; address String?; status UserStatus @default(ACTIVE); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); academicYears AcademicYear[]; @@unique([institutionId,code]) }
 model AcademicYear { id String @id @default(cuid()); institutionId String; campusId String?; name String; startDate DateTime; endDate DateTime; isCurrent Boolean @default(false); institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade); campus Campus? @relation(fields:[campusId],references:[id],onDelete:SetNull); enrollments Enrollment[]; assignments TeacherAssignment[]; timetables Timetable[]; sessions AttendanceSession[]; @@unique([institutionId,name]); @@index([institutionId,isCurrent]) }
