@@ -32,10 +32,11 @@ export async function GET(req:Request){
     }
 
     const sessionWhere:any={institutionId:u.institutionId};
+    if(u.role==="TEACHER"){const teacher=await db.teacher.findFirst({where:{userId:u.id,institutionId:u.institutionId},select:{id:true}});if(!teacher)return NextResponse.json({error:"Teacher profile not found"},{status:403});sessionWhere.teacherId=teacher.id;}
     if(academicYearId)sessionWhere.academicYearId=academicYearId;
     if(subjectId)sessionWhere.subjectId=subjectId;
     if(sectionId)sessionWhere.sectionId=sectionId;
-    if(teacherId)sessionWhere.teacherId=teacherId;
+    if(teacherId&&u.role!=="TEACHER")sessionWhere.teacherId=teacherId;
     if(from||to)sessionWhere.date={...(from?{gte:from}:{}),...(to?{lte:to}:{})};
     if(classId||departmentId)sessionWhere.section={...(sectionId?{}:{}),classLevel:{...(classId?{id:classId}:{}),...(departmentId?{departmentId}: {})}};
 
