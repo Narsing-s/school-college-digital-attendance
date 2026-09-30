@@ -1,1 +1,2 @@
-import {NextResponse} from "next/server";export async function GET(){return NextResponse.json({name:"AttendFlow",short_name:"AttendFlow",start_url:"/",display:"standalone",background_color:"#07111f",theme_color:"#2563eb",icons:[]})}
+import {NextResponse} from "next/server";
+export async function GET(){return NextResponse.json({name:"AttendFlow — Digital Attendance",short_name:"AttendFlow",description:"School and college attendance management",start_url:"/dashboard",scope:"/",display:"standalone",orientation:"portrait-primary",background_color:"#07111f",theme_color:"#2563eb",icons:[{src:"/icon-192.svg",sizes:"192x192",type:"image/svg+xml",purpose:"any maskable"},{src:"/icon-512.svg",sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}]})}
