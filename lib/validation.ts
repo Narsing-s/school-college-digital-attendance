@@ -1,0 +1,1 @@
+import {z} from "zod";export const loginSchema=z.object({username:z.string().min(3).max(100),password:z.string().min(8).max(200)});export const bulkAttendanceSchema=z.object({sessionId:z.string(),records:z.array(z.object({studentId:z.string(),status:z.enum(["PRESENT","ABSENT","LATE","EXCUSED","LEAVE"]),remarks:z.string().max(500).optional()})).min(1)});
