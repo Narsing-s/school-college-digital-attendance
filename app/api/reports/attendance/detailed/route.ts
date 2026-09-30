@@ -8,8 +8,8 @@ function endOfDay(d:Date){const x=new Date(d);x.setHours(23,59,59,999);return x}
 export async function GET(req:Request){
   try{
     const u=await requireUser();
-    if(!["ADMIN","PRINCIPAL","TEACHER"].includes(u.role))return NextResponse.json({error:"Forbidden"},{status:403});
-    if(!u.institutionId)return NextResponse.json({error:"No institution"},{status:400});
+    if(!["ADMIN","PRINCIPAL","TEACHER"].includes(u.role)) return NextResponse.json({error:"Forbidden"},{status:403});
+    if(!u.institutionId) return NextResponse.json({error:"No institution"},{status:400});
     const url=new URL(req.url);
     const period=url.searchParams.get("period")||"all";
     const academicYearId=url.searchParams.get("academicYearId")||"";
@@ -31,18 +31,22 @@ export async function GET(req:Request){
     }
 
     const sessionWhere:any={institutionId:u.institutionId};
-    if(u.role==="TEACHER"){const teacher=await db.teacher.findFirst({where:{userId:u.id,institutionId:u.institutionId},select:{id:true}});if(!teacher)return NextResponse.json({error:"Teacher profile not found"},{status:403});sessionWhere.teacherId=teacher.id;}
-    if(academicYearId)sessionWhere.academicYearId=academicYearId;
-    if(subjectId)sessionWhere.subjectId=subjectId;
-    if(sectionId)sessionWhere.sectionId=sectionId;
-    if(teacherId&&u.role!=="TEACHER")sessionWhere.teacherId=teacherId;
-    if(from||to)sessionWhere.date={...(from?{gte:from}:{}),...(to?{lte:to}:{})};
-    if(classId||departmentId)sessionWhere.section={...(sectionId?{}:{}),classLevel:{...(classId?{id:classId}:{}),...(departmentId?{departmentId}: {})}};
+    if(u.role==="TEACHER"){
+      const teacher=await db.teacher.findFirst({where:{userId:u.id,institutionId:u.institutionId},select:{id:true}});
+      if(!teacher) return NextResponse.json({error:"Teacher profile not found"},{status:403});
+      sessionWhere.teacherId=teacher.id;
+    }
+    if(academicYearId) sessionWhere.academicYearId=academicYearId;
+    if(subjectId) sessionWhere.subjectId=subjectId;
+    if(sectionId) sessionWhere.sectionId=sectionId;
+    if(teacherId&&u.role!=="TEACHER") sessionWhere.teacherId=teacherId;
+    if(from||to) sessionWhere.date={...(from?{gte:from}:{}),...(to?{lte:to}:{})};
+    if(classId||departmentId) sessionWhere.section={classLevel:{...(classId?{id:classId}:{}),...(departmentId?{departmentId}:{})}};
 
     if(semester&&academicYearId){
       const ay=await db.academicYear.findFirst({where:{id:academicYearId,institutionId:u.institutionId}});
       if(ay){
-        const midpoint= new Date((ay.startDate.getTime()+ay.endDate.getTime())/2);
+        const midpoint=new Date((ay.startDate.getTime()+ay.endDate.getTime())/2);
         sessionWhere.date=semester==="1"?{gte:ay.startDate,lte:midpoint}:{gt:midpoint,lte:ay.endDate};
       }
     }
@@ -60,14 +64,10 @@ export async function GET(req:Request){
       if(!x){x={student:r.student,total:0,present:0,absent:0,late:0,excused:0,leave:0,earned:0};byStudent.set(r.studentId,x)}
       x.total++;
       if(r.status==="PRESENT"){x.present++;x.earned+=1}
-      if(r.status==="ABSENT")x.absent++;
-      if(r.status==="LATE"){
-        x.late++;
-        if(r.session.latePolicy==="PRESENT")x.earned+=1;
-        if(r.session.latePolicy==="HALF_DAY")x.earned+=0.5;
-      }
-      if(r.status==="EXCUSED")x.excused++;
-      if(r.status==="LEAVE")x.leave++;
+      else if(r.status==="LATE"){x.late++;if(r.session.latePolicy==="PRESENT")x.earned+=1;else if(r.session.latePolicy==="HALF_DAY")x.earned+=0.5}
+      else if(r.status==="ABSENT")x.absent++;
+      else if(r.status==="EXCUSED")x.excused++;
+      else if(r.status==="LEAVE")x.leave++;
     }
 
     const students=[...byStudent.values()].map(x=>({...x,percentage:x.total?Number((x.earned/x.total*100).toFixed(2)):0}));
@@ -76,11 +76,7 @@ export async function GET(req:Request){
       const date=new Date(r.session.date).toISOString().slice(0,10);
       const t=trendMap.get(date)||{date,present:0,absent:0,late:0,excused:0,leave:0,total:0};
       t.total++;
-      if(r.status==="PRESENT")t.present++;
-      if(r.status==="ABSENT")t.absent++;
-      if(r.status==="LATE")t.late++;
-      if(r.status==="EXCUSED")t.excused++;
-      if(r.status==="LEAVE")t.leave++;
+      if(r.status==="PRESENT")t.present++; else if(r.status==="ABSENT")t.absent++; else if(r.status==="LATE")t.late++; else if(r.status==="EXCUSED")t.excused++; else if(r.status==="LEAVE")t.leave++;
       trendMap.set(date,t);
     }
     return NextResponse.json({
