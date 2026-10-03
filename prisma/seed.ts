@@ -3,7 +3,8 @@ import bcrypt from"bcryptjs";
 const db=new PrismaClient();
 
 async function main(){
- const password=await bcrypt.hash("ChangeMe123!",12);
+ const seedPassword=process.env.SEED_DEMO_PASSWORD||"ChangeMe123!";
+ const password=await bcrypt.hash(seedPassword,12);
  const institution=await db.institution.upsert({where:{code:"DEMO"},update:{},create:{name:"Demo School & College",code:"DEMO",type:InstitutionType.SCHOOL}});
  const year=await db.academicYear.upsert({where:{institutionId_name:{institutionId:institution.id,name:"2026-27"}},update:{isCurrent:true},create:{institutionId:institution.id,name:"2026-27",startDate:new Date("2026-06-01"),endDate:new Date("2027-05-31"),isCurrent:true}});
  const department=await db.department.upsert({where:{institutionId_code:{institutionId:institution.id,code:"SCI"}},update:{},create:{institutionId:institution.id,name:"Science & Mathematics",code:"SCI"}});
@@ -28,7 +29,7 @@ async function main(){
    const su=await db.user.upsert({where:{username:"student1"},update:{passwordHash:password,institutionId:institution.id,role:UserRole.STUDENT,status:UserStatus.ACTIVE},create:{username:"student1",email:"student1@example.com",passwordHash:password,role:UserRole.STUDENT,status:UserStatus.ACTIVE,institutionId:institution.id}});
    await db.student.update({where:{id:st.id},data:{userId:su.id,email:"student1@example.com"}});
    const pu=await db.user.upsert({where:{username:"parent1"},update:{passwordHash:password,institutionId:institution.id,role:UserRole.PARENT,status:UserStatus.ACTIVE},create:{username:"parent1",email:"parent1@example.com",passwordHash:password,role:UserRole.PARENT,status:UserStatus.ACTIVE,institutionId:institution.id}});
-   const parent=await db.parent.upsert({where:{userId:pu.id}},update:{},create:{institutionId:institution.id,userId:pu.id,phone:"9000000000"}});
+   const parent=await db.parent.upsert({where:{userId:pu.id},update:{institutionId:institution.id,phone:"9000000000"},create:{institutionId:institution.id,userId:pu.id,phone:"9000000000"}});
    await db.parentStudent.upsert({where:{parentId_studentId:{parentId:parent.id,studentId:st.id}},update:{},create:{parentId:parent.id,studentId:st.id,relationship:"Parent"}});
   }
  }
@@ -40,6 +41,6 @@ async function main(){
  for(let i=0;i<enrollments.length;i++){
   await db.attendanceRecord.upsert({where:{sessionId_studentId:{sessionId:session.id,studentId:enrollments[i].studentId}},update:{status:statuses[i]||"PRESENT",markedBy:teacherUser.id},create:{institutionId:institution.id,sessionId:session.id,studentId:enrollments[i].studentId,status:statuses[i]||"PRESENT",markedBy:teacherUser.id}});
  }
- console.log("Seed complete. Demo passwords: ChangeMe123!");
+ console.log(`Seed complete. Demo password configured via SEED_DEMO_PASSWORD${process.env.SEED_DEMO_PASSWORD?"":" (default development password)"}.`);
 }
 main().catch(e=>{console.error(e);process.exit(1)}).finally(()=>db.$disconnect());
