@@ -105,7 +105,7 @@ function matches(model:string,row:Row,where:any):boolean{
  if(where.AND && !where.AND.every((x:any)=>matches(model,row,x))) return false;
  if(where.OR && !where.OR.some((x:any)=>matches(model,row,x))) return false;
  if(where.NOT && matches(model,row,where.NOT)) return false;
- for(const [key,cond] of Object.entries(where)){
+ for(const [key,rawCond] of Object.entries(where)){\n   const cond:any=rawCond;
    if(["AND","OR","NOT"].includes(key)) continue;
    const v=getValue(model,row,key);
    if(cond && typeof cond==="object" && !Array.isArray(cond) && !(cond instanceof Date)){
