@@ -248,14 +248,16 @@ userId String @unique
 phone String?
 institution Institution @relation(fields:[institutionId],references:[id],onDelete:Cascade)
 user User @relation(fields:[userId],references:[id],onDelete:Cascade)
-students ParentStudent[] }
+students ParentStudent[]
+}
 model ParentStudent {
  parentId String
 studentId String
 relationship String @default("Guardian")
 parent Parent @relation(fields:[parentId],references:[id],onDelete:Cascade)
 student Student @relation(fields:[studentId],references:[id],onDelete:Cascade)
-@@id([parentId,studentId]) }
+@@id([parentId,studentId])
+}
 model Enrollment {
  id String @id @default(cuid())
 institutionId String
