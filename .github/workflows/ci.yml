@@ -11,18 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: attendance
-        ports: ["5432:5432"]
-        options: >-
-          --health-cmd "pg_isready -U postgres -d attendance"
-          --health-interval 10s --health-timeout 5s --health-retries 5
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/attendance
+      DATABASE_URL: file:./prisma/dev.db
       SESSION_SECRET: ci-test-secret
     steps:
       - uses: actions/checkout@v4
@@ -32,6 +22,7 @@ jobs:
       - run: npm install
       - run: npx prisma generate
       - run: npm run db:migrate:deploy
+      - run: npm run d1:migrate:local
       - run: npm run typecheck
       - run: npm test
       - run: npx playwright install --with-deps chromium
