@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 22
           package-manager-cache: false
-      - run: npm install
+      - run: npm ci
       - name: Resolve D1 database
         shell: bash
         run: |
@@ -36,6 +36,12 @@ jobs:
           fi
       - name: Apply D1 migrations
         run: npx wrangler d1 migrations apply school-college-attendance --remote
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          test -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" || { echo "Missing CLOUDFLARE_API_TOKEN"; exit 1; }
+          test -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" || { echo "Missing CLOUDFLARE_ACCOUNT_ID"; exit 1; }
+          test -n "${{ secrets.SESSION_SECRET }}" || { echo "Missing SESSION_SECRET"; exit 1; }
       - name: Set Worker secrets
         shell: bash
         run: |
