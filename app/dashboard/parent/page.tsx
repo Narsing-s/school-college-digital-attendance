@@ -1,2 +1,24 @@
-import Link from"next/link";import{getCurrentUser}from"@/lib/auth";import{db}from"@/lib/db";
-export default async function ParentDashboard(){const u=await getCurrentUser();if(!u?.institutionId)return <main className="p-6">Sign in.</main>;const parent=await db.parent.findFirst({where:{userId:u.id,institutionId:u.institutionId},include:{students:{include:{student:{include:{attendanceRecords:true}}}}}});if(!parent)return <main className="p-6">Parent profile not found.</main>;return <main className="p-6 pb-24 md:p-10"><div className="mx-auto max-w-6xl"><p className="text-blue-300">PARENT</p><h1 className="text-4xl font-black">My Children</h1><div className="mt-8 grid gap-4 md:grid-cols-2">{parent.students.map(({student})=>{const total=student.attendanceRecords.length;const present=student.attendanceRecords.filter(x=>x.status==="PRESENT").length;const pct=total?Number((present/total*100).toFixed(2)):0;return <div className="card p-6" key={student.id}><h2 className="text-xl font-bold">{student.firstName} {student.lastName||""}</h2><p className="mt-2 text-slate-400">Admission {student.admissionNumber}</p><p className="mt-4 text-3xl font-black">{pct}%</p><p className="text-slate-400">Attendance percentage</p></div>})}</div><div className="mt-6 grid gap-3 md:grid-cols-3">{["attendance","leaves","notifications"].map(x=><Link className="card p-5" href={"/"+x} key={x}><b>{x.toUpperCase()}</b></Link>)}</div></div></main>
+import Link from "next/link";
+import {getCurrentUser} from "@/lib/auth";
+import {db} from "@/lib/db";
+
+export default async function ParentDashboard(){
+ const u=await getCurrentUser();
+ if(!u?.institutionId) return <main className="p-6">Sign in.</main>;
+ const parent=await db.parent.findFirst({where:{userId:u.id,institutionId:u.institutionId},include:{students:{include:{student:{include:{attendanceRecords:true}}}}}});
+ if(!parent) return <main className="p-6">Parent profile not found.</main>;
+ return <main className="p-6 pb-24 md:p-10">
+  <div className="mx-auto max-w-6xl">
+   <p className="text-blue-300">PARENT</p><h1 className="text-4xl font-black">My Children</h1>
+   <div className="mt-8 grid gap-4 md:grid-cols-2">
+    {parent.students.map(({student})=>{
+     const total=student.attendanceRecords.length;
+     const present=student.attendanceRecords.filter(x=>x.status==="PRESENT").length;
+     const pct=total?Number((present/total*100).toFixed(2)):0;
+     return <div className="card p-6" key={student.id}><h2 className="text-xl font-bold">{student.firstName} {student.lastName||""}</h2><p className="mt-2 text-slate-400">Admission {student.admissionNumber}</p><p className="mt-4 text-3xl font-black">{pct}%</p><p className="text-slate-400">Attendance percentage</p></div>;
+    })}
+   </div>
+   <div className="mt-6 grid gap-3 md:grid-cols-3">{["attendance","leaves","notifications"].map(x=><Link className="card p-5" href={"/"+x} key={x}><b>{x.toUpperCase()}</b></Link>)}</div>
+  </div>
+ </main>;
+}
