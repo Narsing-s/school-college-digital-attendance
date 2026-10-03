@@ -8,15 +8,15 @@ datasource db {
   url = "file:./dev.db"
 }
 
-enum InstitutionType { SCHOOL COLLEGE }
-enum UserRole { SUPER_ADMIN ADMIN PRINCIPAL TEACHER STUDENT PARENT }
-enum UserStatus { ACTIVE INACTIVE }
-enum AttendanceStatus { PRESENT ABSENT LATE EXCUSED LEAVE }
-enum AttendanceMethod { MANUAL QR ROLL_NUMBER }
-enum SessionStatus { OPEN CLOSED }
-enum LatePolicy { PRESENT SEPARATE HALF_DAY }
-enum LeaveStatus { PENDING APPROVED REJECTED CANCELLED }
-enum CalendarDayType { WORKING HOLIDAY EXAM EVENT }
+enum InstitutionType {\n  SCHOOL\n  COLLEGE\n}
+enum UserRole {\n  SUPER_ADMIN\n  ADMIN\n  PRINCIPAL\n  TEACHER\n  STUDENT\n  PARENT\n}
+enum UserStatus {\n  ACTIVE\n  INACTIVE\n}
+enum AttendanceStatus {\n  PRESENT\n  ABSENT\n  LATE\n  EXCUSED\n  LEAVE\n}
+enum AttendanceMethod {\n  MANUAL\n  QR\n  ROLL_NUMBER\n}
+enum SessionStatus {\n  OPEN\n  CLOSED\n}
+enum LatePolicy {\n  PRESENT\n  SEPARATE\n  HALF_DAY\n}
+enum LeaveStatus {\n  PENDING\n  APPROVED\n  REJECTED\n  CANCELLED\n}
+enum CalendarDayType {\n  WORKING\n  HOLIDAY\n  EXAM\n  EVENT\n}
 
 model Institution {
 
