@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
+      - run: npm ci
       - run: npx prisma generate
       - run: npm run db:migrate:deploy
       - run: npm run typecheck
