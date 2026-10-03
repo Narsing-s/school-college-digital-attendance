@@ -4,25 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev",
-    "db:seed": "tsx prisma/seed.ts",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "db:migrate:deploy": "prisma migrate deploy",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "d1:migration:generate": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/d1/0001_initial.sql",
-    "d1:migrate": "wrangler d1 migrations apply school-college-attendance --remote",
-    "d1:migrate:local": "wrangler d1 migrations apply school-college-attendance --local"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.0",
     "next": "^15.5.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -31,14 +22,12 @@
     "lucide-react": "^0.468.0",
     "recharts": "^2.15.4",
     "qrcode": "^1.5.4",
-    "@opennextjs/cloudflare": "^1.20.7",
-    "@prisma/adapter-d1": "^6.19.0"
+    "@opennextjs/cloudflare": "^1.20.7"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "prisma": "^6.19.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "tailwindcss": "^4.1.0",
